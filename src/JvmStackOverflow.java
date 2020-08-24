@@ -1,7 +1,7 @@
 /**
  * @author qpointwang
  */
-public class JvmStackoverflowtest {
+public class JvmStackOverflow {
     private int stackLength = -1;
 
     //通过递归调用造成StackOverFlowError
@@ -11,7 +11,7 @@ public class JvmStackoverflowtest {
     }
 
     public static void main(String[] args) {
-        JvmStackoverflowtest searChin = new JvmStackoverflowtest();
+        JvmStackOverflow searChin = new JvmStackOverflow();
         try {
             searChin.stackLeak();
         } catch (Throwable e) {
