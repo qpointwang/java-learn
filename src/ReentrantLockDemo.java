@@ -1,4 +1,6 @@
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -8,10 +10,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ReentrantLockDemo {
     //    非公平锁 默认构建的锁fair = false，公平锁是关闭的
-//    private static final Lock lock = new ReentrantLock();
-//    公平锁
-    private static final Lock lock = new ReentrantLock(true);
-    private static int a = 0;
+    //    private static final Lock lock = new ReentrantLock();
+    //    公平锁
+    private static final ReentrantLock lock = new ReentrantLock(true);
+    private static Condition condition1 = lock.newCondition();
+    private static Condition condition2 = lock.newCondition();
+    private static int a = 1;
 
     public static void main(String[] args) {
 //        new Thread(() -> test(), "线程A").start();
@@ -25,7 +29,12 @@ public class ReentrantLockDemo {
 //        new Thread(() -> testForFairLock(), "线程6").start();
 
         // testForInterrupted();
-        testForTryLock();
+        // testForTryLock();
+        // CAS();
+
+
+        new Thread(() -> testForCondition1(), "线程1").start();
+        new Thread(() -> testForCondition2(), "线程2").start();
     }
 
     public static void test() {
@@ -71,6 +80,72 @@ public class ReentrantLockDemo {
         firstThread.start();
         secondThread.start();
     }
+
+    // CAS
+    public static void CAS() {
+        AtomicInteger index = new AtomicInteger(10);
+
+        if (index.compareAndSet(10, 11)) {
+            System.out.println(index.get()); // 11
+        } else {
+            System.out.println("失败");
+        }
+
+        index.decrementAndGet();
+        System.out.println(index.get()); // 10
+        System.out.println(index.getAndSet(13)); // 10
+        System.out.println(index.get()); // 13
+        index.incrementAndGet();
+    }
+
+    // condition
+    public static void testForCondition1() {
+        for (int i = 0; i < 10; i++) {
+            try {
+                lock.lock();
+
+                while (a == 1) {
+                    condition1.await();
+                }
+                System.out.println(Thread.currentThread().getName() + " ");
+                a = 1;
+                condition2.signal();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+        }
+
+
+    }
+
+    // condition
+    public static void testForCondition2() {
+        for (int i = 0; i < 10; i++) {
+            try {
+                lock.lock();
+
+                while (a == 2) {
+                    condition2.await();
+                }
+                lock.lock();
+                System.out.println(Thread.currentThread().getName());
+                System.out.println("是否被锁 " + lock.isLocked());
+                System.out.println("当前线程保持此锁的次数，也就是执行此线程执行lock方法的次数 " + lock.getHoldCount());
+                System.out.println("返回正等待获取此锁的线程估计数 " + lock.getQueueLength());
+                lock.unlock();
+                a = 2;
+                condition1.signal();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
+
 
 }
 

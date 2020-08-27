@@ -46,3 +46,11 @@ System.out.println(a == b); // true
 System.out.println(a == c); // false
 ```
 而`String c = new String("ab");`是根据`"ab"`这个String对象再次构造一个String对象;在堆中从新new一块儿内存，把指针赋给栈，将新构造出来的String对象的引用赋给c。 因此 只要是new String()，栈中的地址都是指向最新的new出来的堆中的地址。
+
+
+## 3. `wait()` `notify()` `notifyAll()`
+`wait()`,`notify()`和`notifyAll()`必须要与`synchronized(resource)`一起使用。
+* `wait()`,`notify()`和`notifyAll()`方法是本地方法，并且为`final`方法，无法被重写。
+* 调用某个对象的`wait()`方法能让当前线程阻塞，并且当前线程必须拥有此对象的monitor（即锁，或者叫管程）
+* 调用某个对象的`notify()`方法能够唤醒一个正在等待这个对象的monitor的线程，如果有多个线程都在等待这个对象的monitor，则只能唤醒其中一个线程；
+* 调用`notifyAll()`方法能够唤醒所有正在等待这个对象的monitor的线程；
