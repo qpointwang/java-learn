@@ -38,7 +38,7 @@ class ThreadForSynchronizedDemo implements Runnable {
 
     Lock lock = new ReentrantLock();
     private Integer number = 0;
-
+    private Integer LOCK = 0;
     @Override
     public void run() {
 //        try {
@@ -51,7 +51,7 @@ class ThreadForSynchronizedDemo implements Runnable {
 //        }
 
         // this 锁住的是当前对象
-        synchronized (this) {
+        synchronized (LOCK) {
             setNumber();
         }
 
@@ -73,7 +73,7 @@ class ThreadForSynchronizedDemo implements Runnable {
 public class ThreadTest {
 
     public static void main(String[] args) {
-        /*ThreadByThreadDemo threadByThread = new ThreadByThreadDemo();
+        ThreadByThreadDemo threadByThread = new ThreadByThreadDemo();
         threadByThread.start();
         threadByThread.run();
 
@@ -103,7 +103,7 @@ public class ThreadTest {
         // 线程池提交runnable
         Future result = threadPool.submit(threadByRunnableDemo);
         System.out.println(result);
-        threadPool.shutdown(); */
+        threadPool.shutdown();
 
         ThreadForSynchronizedDemo threadForSynchronizedDemo = new ThreadForSynchronizedDemo();
         ExecutorService service = Executors.newFixedThreadPool(50);

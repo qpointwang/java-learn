@@ -54,3 +54,32 @@ System.out.println(a == c); // false
 * 调用某个对象的`wait()`方法能让当前线程阻塞，并且当前线程必须拥有此对象的monitor（即锁，或者叫管程）
 * 调用某个对象的`notify()`方法能够唤醒一个正在等待这个对象的monitor的线程，如果有多个线程都在等待这个对象的monitor，则只能唤醒其中一个线程；
 * 调用`notifyAll()`方法能够唤醒所有正在等待这个对象的monitor的线程；
+
+## 4. synchronized
+
+* 使用this
+
+ 当两个并发线程访问同一个对象object中的synchronized(this)同步代码块时，一段时间内只能有一个线程被执行，另一个线程必须等待当前线程执行完这个同步代码块以后才能执行该代码块。
+ 当一个线程访问object的一个synchronized同步代码块时，另一个线程仍然可以访问该object对象中的非synchronized(this)同步代码块。
+
+* 将任意对象作为对象监视器
+
+多个线程调用同一个对象中的不同名称的synchronized同步方法或synchronized(this)同步代码块时，调用的效果就是按顺序执行，也就是同步的，阻塞的。
+这说明synchronized同步方法或synchronized(this)同步代码块分别有两种作用。
+
+      （1）synchronized同步方法
+
+       ①对其他synchronized同步方法或synchronized（this）同步代码块呈阻塞状态。
+
+       ②同一时间只有一个线程可以执行synchronized同步方法中的代码
+
+      （2）synchronized(this)同步代码块
+
+       ①对其他synchronized同步方法或synchronized（this）同步代码块呈阻塞状态。
+
+       ②同一时间只有一个线程可以执行synchronized(this)同步代码块中的代码。
+
+锁非this对象具有一定的优点：如果一个类中有很多个synchronized方法，这时虽然能实现同步，但会受到阻塞，所以影响效率；
+但如果使用同步代码块锁非this对象，则synchronized(非this)代码块的程序与同步方法是异步的。不与其他锁this同步方法争抢this锁，则可以大大提高运行效率。
+
+使用synchronized(非this对象x)同步代码块 进行同步操作时，对象监视器必须是同一个对象。如果不是同一个对象监视器，运行的结果就是异步调用了，就会交叉运行。
