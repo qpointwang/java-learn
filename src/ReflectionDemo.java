@@ -1,7 +1,4 @@
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 
 /**
  * 由于JVM为每个加载的class创建了对应的Class实例（类实例），并在实例中保存了该class的所有信息，包括类名、包名、父类、实现的接口、所有方法、字段等，
@@ -21,6 +18,8 @@ public class ReflectionDemo {
         getClassInfo();
 
         invokeMethod();
+
+        constructor();
     }
 
     static void printClassInfo(Class cls) {
@@ -172,7 +171,60 @@ public class ReflectionDemo {
             e.printStackTrace();
         }
 
+        //通过Class实例的方法可以获取Method实例：getMethod()，getMethods()，getDeclaredMethod()，getDeclaredMethods()；
+        //
+        //通过Method实例可以获取方法信息：getName()，getReturnType()，getParameterTypes()，getModifiers()；
+        //
+        //通过Method实例可以调用某个对象的方法：Object invoke(Object instance, Object... parameters)；
+        //
+        //通过设置setAccessible(true)来访问非public方法；
+
     }
+
+
+    static public void constructor(){
+
+//        try {
+//            Person p = Person.class.newInstance();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+        // 调用Class.newInstance()的局限是，它只能调用该类的public无参数构造方法。如果构造方法带有参数，或者不是public，就无法直接通过Class.newInstance()来调用。
+        // 获取构造方法Integer(int):
+        Constructor cons1 = null;
+        try {
+            cons1 = Integer.class.getConstructor(int.class);
+            // 调用构造方法:
+            Integer n1 = (Integer) cons1.newInstance(123);
+            System.out.println(n1);
+
+            // 获取构造方法Integer(String)
+            Constructor cons2 = Integer.class.getConstructor(String.class);
+            Integer n2 = (Integer) cons2.newInstance("456");
+            System.out.println(n2);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        // 通过Class实例获取Constructor的方法如下：
+        //
+        //getConstructor(Class...)：获取某个public的Constructor；
+        //getDeclaredConstructor(Class...)：获取某个Constructor；
+        //getConstructors()：获取所有public的Constructor；
+        //getDeclaredConstructors()：获取所有Constructor。
+        //注意Constructor总是当前类定义的构造方法，和父类无关，因此不存在多态的问题。
+        //
+        //调用非public的Constructor时，必须首先通过setAccessible(true)设置允许访问。setAccessible(true)可能会失败。
+    }
+
 }
 
 
