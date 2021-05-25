@@ -1,4 +1,6 @@
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 /**
@@ -17,6 +19,8 @@ public class ReflectionDemo {
         getClassInstance();
 
         getClassInfo();
+
+        invokeMethod();
     }
 
     static void printClassInfo(Class cls) {
@@ -115,6 +119,59 @@ public class ReflectionDemo {
             e.printStackTrace();
         }
 
+
+        try {
+            // 获取public方法getScore，参数为String int
+            System.out.println(stdClass.getMethod("getScore", String.class, int.class));
+            // 获取继承的public方法getName，无参数:
+            System.out.println(stdClass.getMethod("getName"));
+            // 获取private方法getGrade，参数为int:
+            System.out.println(stdClass.getDeclaredMethod("getGrade", int.class));
+
+
+            // 一个Method对象包含一个方法的所有信息：
+            //
+            //getName()：返回方法名称，例如："getScore"；
+            //getReturnType()：返回方法返回值类型，也是一个Class实例，例如：String.class；
+            //getParameterTypes()：返回方法的参数类型，是一个Class数组，例如：{String.class, int.class}；
+            //getModifiers()：返回方法的修饰符，它是一个int，不同的bit表示不同的含义。
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    static public void invokeMethod(){
+        String s = "Hello world";
+        String r = s.substring(6); // "world"
+        System.out.println(r);
+
+        Class cls = String.class;
+        try {
+            Method method = cls.getMethod("substring", int.class);
+            // 对Method实例调用invoke就相当于调用该方法，invoke的第一个参数是对象实例，即在哪个实例上调用该方法，后面的可变参数要与方法参数一致，否则将报错。
+            String t = (String) method.invoke(s,6);
+            System.out.println(t);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        //调用静态方法
+        //如果获取到的Method表示一个静态方法，调用静态方法时，由于无需指定实例对象，所以invoke方法传入的第一个参数永远为null
+        try {
+            Method method = Integer.class.getMethod("parseInt", String.class);
+            System.out.println(method.invoke(null, "666"));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
     }
 }
 
@@ -122,6 +179,15 @@ public class ReflectionDemo {
 class Student extends People {
     public int score;
     private int grade;
+
+
+    public int getScore(String type, int grade) {
+        return grade;
+    }
+
+    private int getGrade(int year) {
+        return 1;
+    }
 
     Student(String name) {
         super(name);
@@ -133,6 +199,10 @@ class People {
 
     public People(String name) {
         this.name = name;
+    }
+
+    public String getName() {
+        return "Person";
     }
 }
 
