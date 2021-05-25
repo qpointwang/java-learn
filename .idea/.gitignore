@@ -1,12 +1,13 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
 # Datasource local storage ignored files
 /../../../../../../../:\Users\Administrator\Documents\GitHub\java-learn\.idea/dataSources/
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
-.idea
+../.idea
 ### Java template
 # Compiled class file
 *.class
